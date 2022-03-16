@@ -1,12 +1,17 @@
 import logging
 import sys
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 from loguru import logger
-from pydantic import PostgresDsn, SecretStr
+from pydantic import AnyUrl, PostgresDsn, SecretStr
 
 from app.core.logging import InterceptHandler
 from app.core.settings.base import BaseAppSettings
+
+
+class SqliteDsn(AnyUrl):
+    allowed_schemes = {"sqlite"}
+    host_required = False
 
 
 class AppSettings(BaseAppSettings):
@@ -18,7 +23,7 @@ class AppSettings(BaseAppSettings):
     title: str = "Fastapi Service"
     version: str = "0.0.1"
 
-    database_url: PostgresDsn
+    database_url: Union[PostgresDsn, SqliteDsn]
     max_connection_count: int = 10
     min_connection_count: int = 10
 
